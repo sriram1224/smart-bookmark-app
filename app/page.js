@@ -19,21 +19,35 @@ export default function Home() {
 
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-[#A78BFA] border-t-transparent mx-auto mb-4"></div>
+          <p className="text-base text-slate-600 font-normal">Loading...</p>
+        </div>
       </div>
     );
   }
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">Smart Bookmark App</h1>
-          <p className="text-gray-600 mb-8">Manage your bookmarks with real-time sync</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
+        <div className="text-center max-w-md w-full">
+          <div className="mb-8 animate-fade-in">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#A78BFA]/20 to-[#6366F1]/20 rounded-2xl mb-6">
+              <svg className="w-8 h-8 text-[#6366F1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-medium mb-3 text-slate-800 tracking-tight">
+              Smart Bookmark
+            </h1>
+            <p className="text-slate-600 text-base mb-2 leading-relaxed">Save and organize your favorite links</p>
+            <p className="text-slate-500 text-sm leading-relaxed">Real-time sync across all your devices</p>
+          </div>
+          
           <button
             onClick={() => signIn('google')}
-            className="bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3 px-6 border border-gray-300 rounded-lg shadow flex items-center gap-3 mx-auto"
+            className="group w-full bg-white hover:bg-slate-50 text-slate-700 font-normal py-3.5 px-6 border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ease-out flex items-center justify-center gap-3 hover:-translate-y-0.5"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -41,30 +55,60 @@ export default function Home() {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Sign in with Google
+            <span className="text-[15px]">Continue with Google</span>
           </button>
+          
+          <div className="mt-8 flex items-center justify-center gap-6 text-sm text-slate-500">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <span>Secure</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#A78BFA]"></div>
+              <span>Real-time</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
+              <span>Private</span>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">My Bookmarks</h1>
+    <div className="min-h-screen bg-[#F8F9FA]">
+      <nav className="bg-white/70 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-10">
+        <div className="max-w-[1200px] mx-auto px-6 py-5 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-[#A78BFA]/20 to-[#6366F1]/20 rounded-xl flex items-center justify-center">
+              <svg className="w-5 h-5 text-[#6366F1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </div>
+            <h1 className="text-xl font-medium text-slate-800 tracking-tight">
+              My Bookmarks
+            </h1>
+          </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">{session.user.email}</span>
+            <div className="hidden sm:flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#A78BFA] to-[#6366F1] rounded-full flex items-center justify-center text-white text-sm font-medium">
+                {session.user.email[0].toUpperCase()}
+              </div>
+              <span className="text-sm text-slate-500 font-normal">{session.user.email}</span>
+            </div>
             <button
               onClick={() => signOut()}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm"
+              className="text-slate-600 hover:text-slate-800 px-4 py-2 rounded-lg text-sm font-normal transition-colors duration-200 hover:bg-slate-100"
             >
               Sign Out
             </button>
           </div>
         </div>
       </nav>
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      
+      <main className="max-w-[1200px] mx-auto px-6 py-10">
         <AddBookmark userId={session.user.id} onBookmarkAdded={handleBookmarkAdded} />
         <BookmarkList userId={session.user.id} refreshTrigger={refreshTrigger} onBookmarkDeleted={handleBookmarkDeleted} />
       </main>

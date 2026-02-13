@@ -25,7 +25,6 @@ export default function BookmarkList({ userId, refreshTrigger, onBookmarkDeleted
   }, [userId, refreshTrigger]);
 
   useEffect(() => {
-    // Subscribe to real-time changes
     const channel = supabase
       .channel(`bookmarks-${userId}`)
       .on(
@@ -41,7 +40,6 @@ export default function BookmarkList({ userId, refreshTrigger, onBookmarkDeleted
           
           if (payload.eventType === 'INSERT') {
             setBookmarks((prev) => {
-              // Avoid duplicates
               if (prev.some(b => b.id === payload.new.id)) return prev;
               return [payload.new, ...prev];
             });
@@ -71,58 +69,103 @@ export default function BookmarkList({ userId, refreshTrigger, onBookmarkDeleted
       });
       
       if (response.ok) {
-        // Optimistically update UI
         setBookmarks((prev) => prev.filter((b) => b.id !== id));
-        // Notify parent
         if (onBookmarkDeleted) {
           onBookmarkDeleted();
         }
       }
     } catch (error) {
       console.error('Error deleting bookmark:', error);
-      // Refetch on error
       fetchBookmarks();
     }
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading bookmarks...</div>;
+    return (
+      <div className="text-center py-16">
+        <div className="animate-spin rounded-full h-10 w-10 border-2 border-[#A78BFA] border-t-transparent mx-auto mb-4"></div>
+        <p className="text-slate-600 text-[15px]">Loading your bookmarks...</p>
+      </div>
+    );
   }
 
   if (bookmarks.length === 0) {
     return (
-      <div className="bg-white p-8 rounded-lg shadow-md text-center text-gray-500">
-        No bookmarks yet. Add your first one above!
+      <div className="bg-white p-12 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.08)] text-center">
+        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-medium text-slate-700 mb-2">No bookmarks yet</h3>
+        <p className="text-slate-500 text-[15px] leading-relaxed">Start by adding your first bookmark above</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {bookmarks.map((bookmark) => (
-        <div
-          key={bookmark.id}
-          className="bg-white p-4 rounded-lg shadow-md flex justify-between items-center hover:shadow-lg transition-shadow"
-        >
-          <div className="flex-1">
-            <h3 className="font-semibold text-gray-800">{bookmark.title}</h3>
-            <a
-              href={bookmark.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-500 hover:underline"
-            >
-              {bookmark.url}
-            </a>
-          </div>
-          <button
-            onClick={() => handleDelete(bookmark.id)}
-            className="ml-4 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-          >
-            Delete
-          </button>
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-base font-medium text-slate-700">
+          Your Bookmarks <span className="text-slate-400 font-normal">({bookmarks.length})</span>
+        </h3>
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="w-1.5 h-1.5 bg-[#6EE7B7] rounded-full animate-pulse"></div>
+          <span className="text-[13px]">Live</span>
         </div>
-      ))}
+      </div>
+      
+      <div className="space-y-5">
+        {bookmarks.map((bookmark, index) => (
+          <div
+            key={bookmark.id}
+            className="group bg-white p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-300 ease-out hover:-translate-y-1 animate-fade-in"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-[#F3F0FF] rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-[#6366F1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                  </div>
+                  <h3 className="font-medium text-slate-800 text-base truncate">{bookmark.title}</h3>
+                </div>
+                <a
+                  href={bookmark.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[14px] text-[#6366F1] hover:text-[#5B5FC7] flex items-center gap-1.5 truncate transition-colors duration-200 ml-[52px]"
+                >
+                  <span className="truncate">{bookmark.url}</span>
+                  <svg className="w-3.5 h-3.5 flex-shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+                <p className="text-xs text-slate-400 mt-3 ml-[52px]">
+                  {new Date(bookmark.created_at).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+              <button
+                onClick={() => handleDelete(bookmark.id)}
+                className="flex-shrink-0 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-[#F87171] px-3 py-2 rounded-lg text-sm font-normal transition-all duration-300 hover:bg-red-50 flex items-center gap-1.5"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span className="hidden sm:inline text-[13px]">Delete</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
