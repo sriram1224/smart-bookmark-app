@@ -17,13 +17,11 @@ export async function GET(request) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Supabase error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json(data || []);
   } catch (err) {
-    console.error('Server error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

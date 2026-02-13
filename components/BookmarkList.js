@@ -36,8 +36,6 @@ export default function BookmarkList({ userId, refreshTrigger, onBookmarkDeleted
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          console.log('Realtime event received:', payload);
-          
           if (payload.eventType === 'INSERT') {
             setBookmarks((prev) => {
               if (prev.some(b => b.id === payload.new.id)) return prev;
@@ -52,12 +50,9 @@ export default function BookmarkList({ userId, refreshTrigger, onBookmarkDeleted
           }
         }
       )
-      .subscribe((status) => {
-        console.log('Realtime subscription status:', status);
-      });
+      .subscribe();
 
     return () => {
-      console.log('Unsubscribing from realtime');
       supabase.removeChannel(channel);
     };
   }, [userId]);
